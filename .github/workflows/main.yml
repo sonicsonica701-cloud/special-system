@@ -1,0 +1,37 @@
+name: Make Puffin Clone APK
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows you to click a button to start the build manually
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Get the code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Setup Java environment
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Make Gradle executable
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # 4. Build the Debug APK
+      - name: Build APK
+        run: ./gradlew assembleDebug
+
+      # 5. Upload the APK so you can download it
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: mouse-browser-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
